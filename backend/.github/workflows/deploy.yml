@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+    - name: Build with Maven
+      run: ./mvnw clean package -DskipTests
+    - name: Build Docker Image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pedidos-backend:latest .
+    - name: Push to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker push ${{ secrets.DOCKER_USERNAME }}/pedidos-backend:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/pedidos-backend:latest
+          docker stop backend || true
+          docker rm backend || true
+          docker run -d --name backend -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/pedidos-backend:latest
