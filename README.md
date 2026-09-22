@@ -158,39 +158,7 @@ Password: Password123!
 
 ---
 
-### Opción 2 — Backend en EC2 (modo completo)
-
-**Pre-requisitos:**
-1. Iniciar el Laboratorio de AWS Academy → esperar círculo verde
-2. Descargar `labsuser.pem` desde AWS Details y colocarlo en la raíz del proyecto
-
-```bash
-# Desde la carpeta raíz del proyecto
-# En Windows: doble clic en desplegar.bat
-# O desde PowerShell:
-.\desplegar.bat
-```
-
-El script automáticamente:
-1. Copia el backend a tu instancia EC2
-2. Mata el proceso anterior en el puerto 8080
-3. Compila el proyecto con Maven (clean package)
-4. Inicia el servidor Java
-
-Espera hasta ver en la consola:
-```
-Started DemoApplication in X seconds
-```
-
-Luego inicia el frontend:
-```bash
-cd frontend
-npm run dev
-```
-
----
-
-### Opción 3 — Configuración AWS CLI (credenciales nuevas cada sesión)
+### Opción 2 — Configuración AWS CLI (credenciales nuevas cada sesión)
 
 ```bash
 # Editar ~/.aws/credentials con los datos del Learner Lab:
@@ -201,6 +169,7 @@ aws_session_token=TU_SESSION_TOKEN
 ```
 
 ---
+
 
 ## 📡 Endpoints del Backend
 
